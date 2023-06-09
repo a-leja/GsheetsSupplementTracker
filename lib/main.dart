@@ -49,28 +49,6 @@ Map readFileContent() {
   }
 }
 
-String getFilePath() {
-  logger.i('Getting the file path');
-  const filePath = Constants._credentials;
-  if (filePath.isNotEmpty) {
-    logger.i("File path found: $filePath");
-    return filePath;
-  } else {
-    throw Exception("No file path provided!");
-  }
-}
-
-String getSpreadsheetId() {
-  logger.i('Getting the spreadsheetId');
-  const spreadsheetId = Constants._spreadsheetId;
-  if (spreadsheetId.isNotEmpty) {
-    logger.i("SpreadsheetId found: $spreadsheetId");
-    return spreadsheetId;
-  } else {
-    throw Exception("No spreadsheetId provided!");
-  }
-}
-
 void sendDataToSpreadsheet(
     Map<dynamic, dynamic> credentials
 ) async {
@@ -86,6 +64,25 @@ void sendDataToSpreadsheet(
   } catch (ex) {
     throw Exception("Failed to send data to the spreadsheet. $ex");
   }
+}
+
+String getArgument(dynamic arg) {
+  if (arg.isNotEmpty) {
+    logger.i("Found arg: $arg");
+    return arg;
+  } else {
+    throw Exception("Command line argument was not provided!");
+  }
+}
+
+String getFilePath() {
+  logger.i("Getting argument for the file path to credentials");
+  return getArgument(Constants._credentials);
+}
+
+String getSpreadsheetId() {
+  logger.i("Getting argument for the spreadsheetId");
+  return getArgument(Constants._spreadsheetId);
 }
 
 void logErrorToFile(String error, StackTrace stackTrace) {
