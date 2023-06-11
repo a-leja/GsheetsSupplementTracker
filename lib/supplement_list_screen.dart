@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
 import 'popup_dialog.dart';
 
-class Homepage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Supplement Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-      ),
-      home: SupplementListScreen(),
-    );
-  }
-}
-
 class SupplementListScreen extends StatelessWidget {
   final List<String> supplements = [
     'Calcium',
@@ -42,7 +29,6 @@ class SupplementListScreen extends StatelessWidget {
           return ListTile(
             title: Text(selectedSupplement),
             onTap: () {
-              // Handle tapping on a supplement item
               _openPopup(context, selectedSupplement);
             },
           );

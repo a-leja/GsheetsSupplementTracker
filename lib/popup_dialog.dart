@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supplementtracker/google_sheets_client.dart';
 
 class PopupDialog extends StatefulWidget {
   final String selectedSupplement;
@@ -14,6 +15,7 @@ class _PopupDialogState extends State<PopupDialog> {
   final TextEditingController _selectedSupplementController = TextEditingController();
   final TextEditingController _intakeController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
+  bool isSaved = false;
 
   @override
   void initState() {
@@ -90,7 +92,7 @@ class _PopupDialogState extends State<PopupDialog> {
                   child: Text('Save'),
                   onPressed: () {
                     // Perform save operation
-                    Navigator.of(context).pop();
+                    _saveData(context);
                   },
                 ),
               ],
@@ -115,5 +117,44 @@ class _PopupDialogState extends State<PopupDialog> {
         _dateController.text = _formatDate(selectedDate!);
       });
     }
+  }
+
+  void _saveData(BuildContext context) async {
+    bool isSuccess = false;
+    try {
+      await GoogleSheetsClient().insertData(
+          _selectedSupplementController.text,
+          _intakeController.text,
+          _dateController.text
+      );
+      isSuccess = true;
+    } catch (ex) {
+      isSuccess = false;
+      logger.d("Something went wrong, $ex");
+    }
+
+    setState(() {
+      isSaved = isSuccess;
+    });
+
+    Navigator.of(context).pop();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(isSuccess ? Icons.check : Icons.error, color: isSuccess ? Colors.green : Colors.red),
+            SizedBox(width: 8),
+            Text(isSuccess ? 'Data saved successfully!' : 'Failed to save data.'),
+          ],
+        ),
+        action: SnackBarAction(
+          label: 'Dismiss',
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
   }
 }
