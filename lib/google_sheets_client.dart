@@ -11,8 +11,8 @@ class GoogleSheetsClient {
 
   Future insertData(String supplement, String intake, String date) async {
     try {
-      GoogleSheetsClient().connect();
-      await _worksheet!.values.appendRow([
+      await GoogleSheetsClient().connect();
+      _worksheet!.values.appendRow([
         supplement, intake, date
       ]);
       logger.i("Data successfully saved in G-Sheets!");
@@ -22,8 +22,8 @@ class GoogleSheetsClient {
   }
 
   connect() async {
-    var credentials = await readCredentialsFileContent();
-    _worksheet = await getWorksheet(credentials);
+    final credentials = await readCredentialsFileContent();
+    await getWorksheet(credentials);
   }
 
   Future<Map> readCredentialsFileContent() async {
@@ -33,7 +33,6 @@ class GoogleSheetsClient {
       final jsonData = jsonDecode(jsonString);
       return jsonData;
     } catch (ex) {
-      logger.d("Failed to read file content, $ex");
       throw Exception("Failed to read file content, $ex");
     }
   }
@@ -45,12 +44,12 @@ class GoogleSheetsClient {
       final gsheets = GSheets(credentials);
       logger.d("Fetching the spreadsheet");
       final spreadsheet = await gsheets.spreadsheet(
-          "1MVSVvFpWKVmdcu7Yf9pwNQovyD9lzFqVdLfiHHADDJs"
+          "<spreadsheetId>"
       );
       logger.d("Getting the worksheet");
       return _worksheet = spreadsheet.worksheetByTitle("test");
     } catch (ex) {
-      throw Exception("Failed to get the spreadsheet. $ex");
+      throw Exception("Failed to get the worksheet. $ex");
     }
   }
 }
